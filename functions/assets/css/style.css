@@ -1,0 +1,345 @@
+/* ------------------------------
+   글로벌 설정
+------------------------------ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Nanum+Myeongjo:wght@400;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Noto Serif KR', serif;
+    background: #050811;
+    color: #fafafa;
+    overflow-x: hidden;
+}
+
+/* ------------------------------
+   배경 (반응형)
+------------------------------ */
+.bg-overlay {
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 50%),
+        radial-gradient(circle at bottom, rgba(0,255,180,0.1), transparent 55%),
+        url("bg-bw.jpg") center center / cover no-repeat;
+    opacity: 0.32;
+    filter: blur(1.5px);
+    z-index: -1;
+}
+
+/* ------------------------------
+   컨테이너 & 레이아웃
+------------------------------ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 18px 60px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 26px;
+}
+
+.header h1 {
+    font-family: 'Nanum Myeongjo', serif;
+    font-size: 2.4rem;
+    color: #f8f6ef;
+    letter-spacing: 0.15em;
+}
+
+.subtitle {
+    margin-top: 6px;
+    color: #c7c4bc;
+    font-size: 0.95rem;
+}
+
+/* ------------------------------
+   메인 2단 레이아웃
+------------------------------ */
+.main-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;  /* 좌측 입력 / 우측 결과 */
+    gap: 26px;
+}
+
+/* 모바일에서는 1단 */
+@media (max-width: 900px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ------------------------------
+   카드 공통 스타일
+------------------------------ */
+.card {
+    background: rgba(10, 15, 25, 0.85);
+    border-radius: 18px;
+    border: 1px solid rgba(150, 200, 255, 0.2);
+    padding: 24px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+}
+
+.card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    color: #eae6dd;
+    border-left: 3px solid #48e0c4;
+    padding-left: 10px;
+}
+
+/* ------------------------------
+   입력 폼
+------------------------------ */
+.form-row {
+    margin-bottom: 16px;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #ddd3c7;
+}
+
+.form-row input,
+.form-row select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(5,8,12,0.9);
+    color: #fafafa;
+    border: 1px solid rgba(180,220,255,0.35);
+}
+
+
+/* ------------------------------
+   🔥 라디오 버튼 — 고급 스타일
+------------------------------ */
+
+.radio-frame {
+    display: flex;
+    gap: 36px;
+    padding: 22px 26px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+}
+
+.radio-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.block-title {
+    font-weight: 600;
+    color: #e8e3d8;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+}
+
+/* 라디오 버튼 줄 */
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 6px 0;
+}
+
+/* 라디오 버튼 숨기고 커스텀 UI 사용 */
+.radio-option input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(180,220,255,0.45);
+    border-radius: 50%;
+    background: rgba(5,12,18,0.7);
+    transition: all 0.25s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+/* 선택 시 점 + 글로우 */
+.radio-option input[type="radio"]:checked {
+    border-color: #48e0c4;
+    box-shadow: 0 0 8px #48e0c48f;
+}
+
+.radio-option input[type="radio"]:checked::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background: #48e0c4;
+    border-radius: 50%;
+}
+
+/* 텍스트 */
+.radio-option label {
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #f2efe7;
+    opacity: 0.92;
+}
+
+
+/* 🔹 생년월일 + 태어난 시각 가로 배치 */
+.date-time-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.date-col,
+.time-col {
+    flex: 1;
+}
+
+/* 입력 박스 통일 스타일 */
+.date-col input,
+.time-col select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(180,220,255,0.35);
+    background: rgba(5,8,15,0.9);
+    color: #fff;
+}
+
+@media (max-width: 700px) {
+    .radio-frame {
+        flex-direction: column;
+    }
+    .date-time-row {
+        flex-direction: column;
+    }
+}
+
+
+
+/* 모바일에서는 세로 배치 */
+@media (max-width: 600px) {
+    .two-columns {
+        flex-direction: column;
+    }
+}
+
+/* 추가 질문 박스 */
+.question-box {
+    background: rgba(255,255,255,0.12);
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.question-textarea {
+    width: 100%;
+    min-height: 150px;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+.hint {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-top: 8px;
+}
+
+/* 제출 버튼 */
+.submit-btn {
+    margin-top: 18px;
+    width: 100%;
+    padding: 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #48e0c4, #0b9982);
+    color: #031012;
+    border: none;
+    cursor: pointer;
+}
+
+/* ------------------------------
+   결과창 (오른쪽)
+------------------------------ */
+.result-wrapper {
+    grid-column: 2; /* 오른쪽에 배치 */
+}
+
+/* 모바일에서는 아래로 */
+@media (max-width: 900px) {
+    .result-wrapper {
+        grid-column: 1;
+    }
+}
+
+/* 결과 박스 배경 이미지 */
+.result-box {
+    background: 
+        linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), 
+        url("/static/saju_bg_bw.png") center/cover no-repeat;
+    color: #000;
+    padding: 28px;
+    border-radius: 12px;
+    line-height: 1.7;
+    overflow-wrap: break-word;
+    white-space: pre-line;
+    min-height: 260px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+/* PDF 버튼 */
+.pdf-form {
+    margin-top: 12px;
+    text-align: right;
+}
+
+.pdf-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 999px;
+    cursor: pointer;
+    border: 1px solid rgba(120,255,220,0.3);
+    background: rgba(10,20,25,0.9);
+    color: #e8f8f4;
+}
+
+.pdf-btn:hover {
+    background: rgba(72,224,196,0.18);
+}
+
+.loading {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.1rem;
+    animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+.bg-overlay {
+    position: fixed;
+    inset: 0;
+
+    background:
+        linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.6)),
+        url("/data/images/bg_bw.jpg") center center / cover no-repeat;
+
+    opacity: 0.55;
+    z-index: -2;
+}
