@@ -15,12 +15,15 @@ function convertLunarToSolar(dateStr) {
 ========================= */
 document.getElementById("submitBtn").addEventListener("click", async () => {
   const loadingEl = document.getElementById("loading");
+  const resultSection = document.getElementById("resultSection");
+  const resultBox = document.getElementById("resultBox");
+
   loadingEl.style.display = "block";
 
   const dateType = document.querySelector("input[name=date_type]:checked").value;
   let birthdateValue = document.getElementById("birthdate").value;
 
-  // 🔹 음력 선택 시 → 양력 변환
+  // 🔹 음력 → 양력 변환
   if (dateType === "음력") {
     try {
       birthdateValue = convertLunarToSolar(birthdateValue);
@@ -44,6 +47,18 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     followup: document.getElementById("followup").value.trim()
   };
 
+  try {
+    const response = await callOpenAI(payload);
+
+    resultBox.innerText = response.result;
+    resultSection.style.display = "block";   // ✅ 결과 있을 때만 표시
+
+  } catch (err) {
+    console.error(err);
+    alert("사주 해석 중 오류가 발생했습니다.");
+  } finally {
+    loadingEl.style.display = "none";         // ✅ 여기서 반드시 로딩 종료
+  }
 
   const response = await callOpenAI(payload);
   document.getElementById("resultBox").innerText = response.result;
@@ -66,6 +81,3 @@ async function callOpenAI(payload) {
 
   return await res.json();
 }
-
-document.getElementById("resultSection").style.display = "block";
-console.log("📥 response:", response);
