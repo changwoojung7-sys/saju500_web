@@ -1,3 +1,5 @@
+console.log("✅ openai worker invoked");
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const body = await request.json();
@@ -79,6 +81,8 @@ export async function onRequestPost(context) {
     userPrompt += `\n[추가 질문]\n${body.followup}`;
   }
 
+  console.log("📨 request body:", body);
+
   const openaiRes = await fetch(
     "https://api.openai.com/v1/chat/completions",
     {
@@ -100,6 +104,8 @@ export async function onRequestPost(context) {
   );
 
   const json = await openaiRes.json();
+  console.log("📬 openai response status:", openaiRes.status);
+  
 
   return new Response(
     JSON.stringify({ result: json.choices[0].message.content }),
@@ -107,3 +113,5 @@ export async function onRequestPost(context) {
   );
   
 }
+
+console.log("📦 openai response json:", json);

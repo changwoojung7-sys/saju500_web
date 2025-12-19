@@ -45,7 +45,13 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   };
 
 
-  async function callOpenAI(payload) {
+  const response = await callOpenAI(payload);
+  document.getElementById("resultBox").innerText = response.result;
+  
+
+});
+
+async function callOpenAI(payload) {
   const res = await fetch("/api/openai", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -53,14 +59,13 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   });
 
   if (!res.ok) {
+    const text = await res.text();
+    console.error("API ERROR:", text);
     throw new Error("API 호출 실패");
   }
 
   return await res.json();
-  }
+}
 
-  const response = await callOpenAI(payload);
-  document.getElementById("resultBox").innerText = response.result;
-
-
-});
+document.getElementById("resultSection").style.display = "block";
+console.log("📥 response:", response);
