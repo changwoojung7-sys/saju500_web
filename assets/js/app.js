@@ -21,6 +21,36 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   loadingEl.style.display = "block";
 
   const dateType = document.querySelector("input[name=date_type]:checked").value;
+
+  // 🔹 생년월일 자동 하이픈 입력
+  birthInput.addEventListener("input", (e) => {
+    let v = e.target.value.replace(/[^0-9]/g, "");
+
+    // YYYY 입력 완료 → YYYY-
+    if (v.length === 4) {
+      e.target.value = v + "-";
+      return;
+    }
+
+    // YYYYMM 입력 완료 → YYYY-MM-
+    if (v.length === 6) {
+      e.target.value = v.slice(0, 4) + "-" + v.slice(4, 6) + "-";
+      return;
+    }
+
+    // YYYYMMDD 입력 완료 → YYYY-MM-DD
+    if (v.length >= 8) {
+      e.target.value =
+        v.slice(0, 4) + "-" +
+        v.slice(4, 6) + "-" +
+        v.slice(6, 8);
+      return;
+    }
+
+    // 그 외 입력 중
+    e.target.value = v;
+  });
+
   let birthdateValue = document.getElementById("birthdate").value;
 
   // 🔹 음력 → 양력 변환
