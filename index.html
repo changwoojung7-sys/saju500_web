@@ -32,14 +32,17 @@
         <section class="card input-card">
             <h2>기본 정보 입력</h2>
 
-            <div class="form-row">
-                <label for="name">이름 (한글)</label>
-                <input type="text" id="name" required>
-            </div>
+            <!-- 이름 / 한자 이름 같은 줄 -->
+            <div class="form-row name-row">
+                <div class="name-col">
+                    <label for="name">이름 (한글)</label>
+                    <input type="text" id="name" required>
+                </div>
 
-            <div class="form-row">
-                <label for="name_hanja">이름 (한자, 선택)</label>
-                <input type="text" id="name_hanja">
+                <div class="name-col">
+                    <label for="name_hanja">이름 (한자, 선택)</label>
+                    <input type="text" id="name_hanja">
+                </div>
             </div>
 
             <!-- 성별 / 달력 -->

@@ -122,7 +122,7 @@ body {
 .radio-frame {
     display: flex;
     gap: 36px;
-    padding: 22px 26px;
+    padding: 14px 18px;
     border-radius: 16px;
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.12);
@@ -132,7 +132,7 @@ body {
 .radio-block {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
     flex: 1;
 }
 
@@ -147,7 +147,7 @@ body {
 .radio-option {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
     cursor: pointer;
     padding: 6px 0;
 }
@@ -221,14 +221,26 @@ body {
     }
 }
 
+/* 이름 + 한자 이름 한 줄 배치 */
+.name-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
 
+@media (max-width: 600px) {
+    .name-row {
+        grid-template-columns: 1fr;
+    }
+}
 
-/* 모바일에서는 세로 배치 */
+/* 모바일에서는 세로 배치 
 @media (max-width: 600px) {
     .two-columns {
         flex-direction: column;
     }
 }
+*/
 
 /* 추가 질문 박스 */
 .question-box {
@@ -343,3 +355,5 @@ body {
     opacity: 0.55;
     z-index: -2;
 }
+
+
