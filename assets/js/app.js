@@ -1,4 +1,3 @@
-import { callOpenAI } from "./open-ai.js";
 
 /* =========================
    음력 → 양력 변환
@@ -45,15 +44,23 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     followup: document.getElementById("followup").value.trim()
   };
 
-  try {
-    const result = await callOpenAI(payload);
 
-    document.getElementById("resultSection").style.display = "block";
-    document.getElementById("resultBox").innerText = result;
-  } catch (err) {
-    alert("사주 해석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-    console.error(err);
-  } finally {
-    loadingEl.style.display = "none";
+  async function callOpenAI(payload) {
+  const res = await fetch("/api/openai", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    throw new Error("API 호출 실패");
   }
+
+  return await res.json();
+  }
+
+  const response = await callOpenAI(payload);
+  document.getElementById("resultBox").innerText = response.result;
+
+
 });
