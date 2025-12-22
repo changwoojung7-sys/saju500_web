@@ -37,23 +37,22 @@ export async function onRequestPost(context) {
 태어난 시각: ${body.birthtime || "미상"}
 
 설명 요청 항목:
-1) 타고난 기질과 성격
-2) 재능과 강점
-3) 인간관계·연애·가족 성향
-4) 건강 조언
+1) 종합 인생 조언
+2) 타고난 기질과 성격 및 이름풀이
+3) 재능과 강점 및 인간관계 조언
+4) 건강 운세 조언
 5) 직업·진로·재물 운
 6) 올해(${thisYear}) 세운 분석
 7) 내년(${nextYear}) 세운 분석 + 1~12월 월별 운세
-8) 이름과 사주의 조화
-9) 종합 인생 조언
+
 `;
 
   if (body.followup && body.followup.trim()) {
     userPrompt += `
 [추가 질문]
 ${body.followup}
-
 - 전체 사주 흐름과 모순 없이 통합 해석
+- 추가 질문에 대한 구체적 답변 및 실용적인 조언 포함
 - 추가 해설 섹션으로 별도 정리
 `;
   }
@@ -70,13 +69,13 @@ ${body.followup}
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
+        model: "gpt-4o",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 2500   // ⬅ 안전하게 줄임
+        max_tokens: 3000   // ⬅ 안전하게 줄임
       })
     }
   );
