@@ -51,6 +51,7 @@ export async function onRequestPost(context) {
     userPrompt += `
 [추가 질문]
 ${body.followup}
+
 - 전체 사주 흐름과 모순 없이 통합 해석
 - 추가 질문에 대한 구체적 답변 및 실용적인 조언 포함
 - 추가 해설 섹션으로 별도 정리
@@ -75,7 +76,7 @@ ${body.followup}
           { role: "user", content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 3000   // ⬅ 안전하게 줄임
+        max_tokens: 2500   // ⬅ 안전하게 줄임
       })
     }
   );
