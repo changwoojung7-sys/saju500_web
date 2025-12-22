@@ -41,6 +41,14 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   const resultSection = document.getElementById("resultSection");
 
   loading.style.display = "block";
+  resultSection.style.display = "none";
+  resultBox.innerText = "";
+
+  if (!payload.name || !payload.birthdate) {
+  alert("이름과 생년월일은 필수입니다.");
+  loading.style.display = "none";
+  return;
+  }
 
   let birthdate = birthInput.value;
   const dateType = document.querySelector("input[name=date_type]:checked").value;
@@ -60,17 +68,31 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   };
 
   try {
-    const res = await fetch("/api/openai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    const res = await fetch(
+      "https://saju500.onrender.com/api/saju",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }
+    );
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText || "API 오류");
+    }
+
     const data = await res.json();
-    resultBox.innerText = data.result;
+
+    // 🔥 핵심: Render에서 내려준 결과 출력
+    resultBox.innerText = data.result || "결과를 불러오지 못했습니다.";
     resultSection.style.display = "block";
+
   } catch (e) {
-    alert("사주 해석 중 오류 발생");
+    console.error(e);
+    alert("사주 해석 중 오류가 발생했습니다.");
   } finally {
     loading.style.display = "none";
   }
 });
+
