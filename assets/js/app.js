@@ -36,21 +36,15 @@ function convertLunarToSolar(dateStr) {
 
 // 버튼
 document.getElementById("submitBtn").addEventListener("click", async (e) => {
+  e.preventDefault();
+
   const loading = document.getElementById("loading");
   const resultBox = document.getElementById("resultBox");
   const resultSection = document.getElementById("resultSection");
 
-  e.preventDefault(); // 🔥 이거 핵심
-
   loading.style.display = "block";
   resultSection.style.display = "none";
   resultBox.innerText = "";
-
-  if (!payload.name || !payload.birthdate) {
-  alert("이름과 생년월일은 필수입니다.");
-  loading.style.display = "none";
-  return;
-  }
 
   let birthdate = birthInput.value;
   const dateType = document.querySelector("input[name=date_type]:checked").value;
@@ -69,6 +63,13 @@ document.getElementById("submitBtn").addEventListener("click", async (e) => {
     followup: document.getElementById("followup").value.trim()
   };
 
+  // ✅ payload 만든 다음에 검증
+  if (!payload.name || !payload.birthdate) {
+    alert("이름과 생년월일은 필수입니다.");
+    loading.style.display = "none";
+    return;
+  }
+
   try {
     const res = await fetch(
       "https://saju500.onrender.com/api/saju",
@@ -86,15 +87,13 @@ document.getElementById("submitBtn").addEventListener("click", async (e) => {
 
     const data = await res.json();
 
-    // 🔥 핵심: Render에서 내려준 결과 출력
     resultBox.innerText = data.result || "결과를 불러오지 못했습니다.";
     resultSection.style.display = "block";
 
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
     alert("사주 해석 중 오류가 발생했습니다.");
   } finally {
     loading.style.display = "none";
   }
 });
-
