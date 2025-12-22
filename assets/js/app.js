@@ -35,10 +35,12 @@ function convertLunarToSolar(dateStr) {
 }
 
 // 버튼
-document.getElementById("submitBtn").addEventListener("click", async () => {
+document.getElementById("submitBtn").addEventListener("click", async (e) => {
   const loading = document.getElementById("loading");
   const resultBox = document.getElementById("resultBox");
   const resultSection = document.getElementById("resultSection");
+
+  e.preventDefault(); // 🔥 이거 핵심
 
   loading.style.display = "block";
   resultSection.style.display = "none";
