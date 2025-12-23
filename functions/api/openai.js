@@ -7,14 +7,14 @@ export async function onRequest(context) {
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
-      headers: corsHeaders,
+      headers: buildCorsHeaders(request),
     });
   }
 
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", {
       status: 405,
-      headers: corsHeaders,
+      headers: buildCorsHeaders(request),
     });
   }
 
@@ -24,10 +24,11 @@ export async function onRequest(context) {
   let payload;
   try {
     payload = await request.json();
-  } catch {
-    return new Response(
-      JSON.stringify({ error: "Invalid JSON body" }),
-      { status: 400, headers: corsHeaders }
+  } catch (err) {
+    return jsonResponse(
+      { error: "Invalid JSON body" },
+      400,
+      request
     );
   }
 
@@ -35,8 +36,10 @@ export async function onRequest(context) {
      Render Flask API 호출
   =============================== */
   try {
-    // Render Flask API 호출
-   const res = await fetch(
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20_000); // ⭐ 20초 타임아웃
+
+    const res = await fetch(
       "https://saju500.onrender.com/api/saju",
       {
         method: "POST",
@@ -44,51 +47,94 @@ export async function onRequest(context) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       }
     );
 
+    clearTimeout(timeoutId);
 
     if (!res.ok) {
       const errText = await res.text();
-      return new Response(
-        JSON.stringify({
+      return jsonResponse(
+        {
           error: "Render API error",
+          status: res.status,
           detail: errText,
-        }),
-        { status: 500, headers: corsHeaders }
+        },
+        502,
+        request
       );
     }
 
-    const data = await res.json();
+    // 🔥 응답 포맷 방어
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      const raw = await res.text();
+      return jsonResponse(
+        {
+          error: "Invalid JSON from Render",
+          raw,
+        },
+        502,
+        request
+      );
+    }
 
-    // 🔥 Render에서 내려준 결과 그대로 전달
-    return new Response(
-      JSON.stringify({
-        result: data.result,
-      }),
+    if (!data || typeof data !== "object") {
+      return jsonResponse(
+        { error: "Empty response from Render" },
+        502,
+        request
+      );
+    }
+
+    return jsonResponse(
       {
-        status: 200,
-        headers: corsHeaders,
-      }
+        result: data.result ?? data.data ?? data.message ?? "",
+      },
+      200,
+      request
     );
 
   } catch (err) {
-    return new Response(
-      JSON.stringify({
+    const message =
+      err.name === "AbortError"
+        ? "Render API timeout"
+        : String(err);
+
+    return jsonResponse(
+      {
         error: "Failed to call Render API",
-        detail: String(err),
-      }),
-      { status: 500, headers: corsHeaders }
+        detail: message,
+      },
+      502,
+      request
     );
   }
 }
 
 /* ===============================
-   CORS Headers
+   Helper Functions
 =============================== */
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Content-Type": "application/json",
-};
+
+function buildCorsHeaders(request) {
+  const origin = request.headers.get("Origin") || "*";
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Content-Type": "application/json",
+  };
+}
+
+function jsonResponse(body, status, request) {
+  return new Response(
+    JSON.stringify(body),
+    {
+      status,
+      headers: buildCorsHeaders(request),
+    }
+  );
+}
