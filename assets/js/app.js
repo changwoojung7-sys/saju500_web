@@ -92,13 +92,14 @@ document.getElementById("submitBtn").addEventListener("click", async (e) => {
     };
 
     // ===== API 호출 =====
-    const res = await fetch("/api/openai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const res = await fetch(
+      "/api/openai",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }
+    );
 
     // ===== HTTP 에러 처리 =====
     if (!res.ok) {
