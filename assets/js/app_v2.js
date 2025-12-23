@@ -120,7 +120,8 @@ document.getElementById("submitBtn").addEventListener("click", async (e) => {
       throw new Error("해석 결과가 비어 있습니다.");
     }
 
-    resultBox.innerText = data.result;
+    //resultBox.innerText = data.result;
+    resultBox.innerHTML = renderSajuResult(data.result);
     resultSection.style.display = "block";
 
   } catch (err) {
@@ -130,3 +131,130 @@ document.getElementById("submitBtn").addEventListener("click", async (e) => {
     loadingEl.style.display = "none";
   }
 });
+
+function renderSajuResult(rawText) {
+  if (!rawText) return "";
+
+  let html = "";
+  const lines = rawText.split("\n").map(l => l.trim());
+
+  let buffer = [];
+  let currentTitle = "";
+  let isFollowup = false;
+  let isTable = false;
+  let tableRows = [];
+
+  function flushSection() {
+    if (!currentTitle && buffer.length === 0) return;
+
+    let content = buffer.join("\n");
+
+    // 리스트 처리 (- **항목**:)
+    content = content.replace(
+      /- \*\*(.+?)\*\*:?\s*(.+)/g,
+      "<li><strong>$1</strong>: $2</li>"
+    );
+
+    // li 감싸기
+    if (content.includes("<li>")) {
+      content = `<ul>${content}</ul>`;
+    } else {
+      content = content
+        .split("\n")
+        .map(p => `<p>${p}</p>`)
+        .join("");
+    }
+
+    html += `
+      <div class="result-card ${isFollowup ? "followup" : ""}">
+        ${currentTitle ? `<h3>${currentTitle}</h3>` : ""}
+        ${content}
+      </div>
+    `;
+
+    buffer = [];
+    currentTitle = "";
+    isFollowup = false;
+  }
+
+  function flushTable() {
+    if (tableRows.length === 0) return;
+
+    let rowsHtml = tableRows
+      .map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`)
+      .join("");
+
+    html += `
+      <div class="result-card">
+        <h3>⑥ 2026년 월별 운세</h3>
+        <table class="fortune-table">
+          <thead>
+            <tr><th>월</th><th>운세 요약</th></tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>
+    `;
+
+    tableRows = [];
+    isTable = false;
+  }
+
+  for (let line of lines) {
+    if (!line || line === "---") continue;
+
+    // 월별 운세 표 시작
+    if (line.startsWith("| 월")) {
+      flushSection();
+      isTable = true;
+      continue;
+    }
+
+    // 표 내부
+    if (isTable && line.startsWith("|")) {
+      const cols = line.split("|").map(c => c.trim()).filter(Boolean);
+      if (cols.length >= 2 && cols[0] !== "월") {
+        tableRows.push([cols[0], cols[1]]);
+      }
+      continue;
+    }
+
+    // 표 끝
+    if (isTable && !line.startsWith("|")) {
+      flushTable();
+    }
+
+    // 추가 질문
+    if (line.startsWith("### [추가 질문]")) {
+      flushSection();
+      currentTitle = "📌 추가 질문 답변";
+      isFollowup = true;
+      continue;
+    }
+
+    // 섹션 제목 (### 1) ...)
+    const sectionMatch = line.match(/^###\s*\d+\)\s*(.+)/);
+    if (sectionMatch) {
+      flushSection();
+      currentTitle = sectionMatch[1];
+      continue;
+    }
+
+    // 인사말 (맨 위)
+    if (html === "" && line.startsWith("안녕하세요")) {
+      html += `
+        <div class="result-card intro">
+          <p class="greeting">${line}</p>
+        </div>
+      `;
+      continue;
+    }
+
+    buffer.push(line);
+  }
+
+  flushSection();
+  flushTable();
+
+  return html;
+}
