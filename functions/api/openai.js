@@ -36,13 +36,17 @@ export async function onRequest(context) {
   =============================== */
   try {
     // Render Flask API 호출
-    const res = await fetch("/api/saju",
+   const res = await fetch(
+      "https://saju500.onrender.com/api/saju",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       }
     );
+
 
     if (!res.ok) {
       const errText = await res.text();

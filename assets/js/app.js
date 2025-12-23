@@ -71,14 +71,12 @@ document.getElementById("submitBtn").addEventListener("click", async (e) => {
   }
 
   try {
-    const res = await fetch(
-      "https://saju500.onrender.com/api/saju",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }
-    );
+    
+    const res = await fetch("/api/openai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
     if (!res.ok) {
       const errText = await res.text();
