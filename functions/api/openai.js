@@ -37,7 +37,7 @@ export async function onRequest(context) {
   =============================== */
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20_000); // ⭐ 20초 타임아웃
+    const timeoutId = setTimeout(() => controller.abort(), 120_000); // ⭐ 2분 타임아웃
 
     const res = await fetch(
       "https://saju500.onrender.com/api/saju",
