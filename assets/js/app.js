@@ -38,6 +38,27 @@ function convertLunarToSolar(dateStr) {
 document.getElementById("submitBtn").addEventListener("click", async (e) => {
   e.preventDefault();
 
+  /* ==================================
+     Daily Limit Check (Client Side)
+  ================================== */
+  const TODAY = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  const LIMIT_KEY = "saju_daily_limit";
+
+  let record = JSON.parse(localStorage.getItem(LIMIT_KEY));
+
+  // If no record or date mismatch, reset
+  if (!record || record.date !== TODAY) {
+    record = { date: TODAY, count: 0 };
+    localStorage.setItem(LIMIT_KEY, JSON.stringify(record));
+  }
+
+  // Check limit (Max 3)
+  if (record.count >= 3) {
+    alert("하루 3회 무료 사용 횟수를 모두 소진했습니다.\n내일 다시 이용해 주세요.");
+    return;
+  }
+
+
   const loading = document.getElementById("loading");
   const resultBox = document.getElementById("resultBox");
   const resultSection = document.getElementById("resultSection");
@@ -89,6 +110,10 @@ document.getElementById("submitBtn").addEventListener("click", async (e) => {
 
     resultBox.innerText = data.data.result || "결과를 불러오지 못했습니다.";
     resultSection.style.display = "block";
+
+    // Increment Usage Count on Success
+    record.count += 1;
+    localStorage.setItem(LIMIT_KEY, JSON.stringify(record));
 
   } catch (err) {
     console.error(err);
